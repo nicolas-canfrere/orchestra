@@ -7,20 +7,29 @@ namespace App\StateMachine;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 
-final readonly class State implements StateInterface
+final class State implements StateInterface
 {
+    private ?TransitionInterface $nextTransition = null;
+
     public function __construct(
-        private string $name,
+        private readonly string $name,
     ) {
     }
 
-    public function then(StateInterface $state): TransitionInterface
+    public function then(StateInterface $toState): TransitionInterface
     {
-        return new Transition($this, $state);
+        $this->nextTransition = new Transition($this, $toState);
+
+        return $this->nextTransition;
     }
 
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getNextTransition(): ?TransitionInterface
+    {
+        return $this->nextTransition;
     }
 }

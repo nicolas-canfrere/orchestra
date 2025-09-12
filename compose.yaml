@@ -1,0 +1,12 @@
+services:
+
+  php:
+    image: orchestra:dev
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: dev
+    container_name: 'orchestra-php'
+    volumes:
+      - ./:/app
+    working_dir: /app

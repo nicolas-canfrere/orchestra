@@ -7,6 +7,7 @@ namespace App\StateMachine;
 use App\StateMachine\Contract\ActionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
+use App\StateMachine\Exception\TransitionActionAlreadyDefined;
 
 final class Transition implements TransitionInterface
 {
@@ -30,6 +31,9 @@ final class Transition implements TransitionInterface
 
     public function withAction(ActionInterface $action): TransitionInterface
     {
+        if (null !== $this->action) {
+            throw new TransitionActionAlreadyDefined();
+        }
         $this->action = $action;
 
         return $this;

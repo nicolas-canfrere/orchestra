@@ -14,6 +14,9 @@ final class State implements StateInterface
     public function __construct(
         private readonly string $name,
     ) {
+        if ('' === trim($this->name)) {
+            throw new \InvalidArgumentException('State name cannot be empty.');
+        }
     }
 
     public function then(StateInterface $toState): TransitionInterface

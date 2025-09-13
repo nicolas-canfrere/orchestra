@@ -6,7 +6,7 @@ namespace App\StateMachine\ProcessExecutionContext;
 
 use App\StateMachine\Transition\TransitionInterface;
 
-final class ExecutedTransition
+final class ExecutedTransition implements \JsonSerializable
 {
     private function __construct(
         public readonly TransitionInterface $transition,
@@ -17,5 +17,19 @@ final class ExecutedTransition
     public static function create(TransitionInterface $transition): self
     {
         return new self($transition, new \DateTimeImmutable());
+    }
+
+    public function jsonSerialize(): array
+    {
+        $transition = sprintf(
+            '%s::%s',
+            $this->transition->getFromState()->getName(),
+            $this->transition->getToState()?->getName()
+        );
+
+        return [
+            'transition' => $transition,
+            'executedAt' => $this->executedAt->format(\DateTimeInterface::ATOM),
+        ];
     }
 }

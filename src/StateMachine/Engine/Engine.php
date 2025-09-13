@@ -8,10 +8,10 @@ use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
 use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
-use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextWriterInterface;
 use App\StateMachine\State\StateInterface;
 use App\StateMachine\Transition\NextTransitionFinderInterface;
 
@@ -20,6 +20,7 @@ final class Engine implements EngineInterface
     public function __construct(
         private readonly ProcessExecutionContextFactory $contextFactory,
         private readonly NextTransitionFinderInterface $nextTransitionFinder,
+        private readonly ProcessExecutionContextWriterInterface $processExecutionContextWriter,
     ) {
     }
 
@@ -95,5 +96,6 @@ final class Engine implements EngineInterface
         if (ProcessExecutionContextStatusEnum::RUNNING === $context->getStatus()) {
             $context->setStatus(ProcessExecutionContextStatusEnum::FINISHED);
         }
+        $this->processExecutionContextWriter->save($context);
     }
 }

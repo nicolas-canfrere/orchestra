@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\Contract;
+namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Contract\ProcessDefinitionInterface;
+use App\StateMachine\Contract\ProcessExecutionContextInterface;
+use App\StateMachine\Contract\StateInterface;
 
 interface EngineInterface
 {

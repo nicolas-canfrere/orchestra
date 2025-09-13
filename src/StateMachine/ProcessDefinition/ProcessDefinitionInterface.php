@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\ProcessExecutionContext;
+namespace App\StateMachine\ProcessDefinition;
 
 use App\StateMachine\State\StateInterface;
 

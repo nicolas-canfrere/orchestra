@@ -6,6 +6,7 @@ namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
+use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
 use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;

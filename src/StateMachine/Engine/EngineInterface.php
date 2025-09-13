@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
-use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
+use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\State\StateInterface;
 

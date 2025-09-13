@@ -7,7 +7,7 @@ namespace App\Tests\Unit\StateMachine;
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Engine\CircularTransitionException;
 use App\StateMachine\Engine\Engine;
-use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
+use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextIdGeneratorInterface;

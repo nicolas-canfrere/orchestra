@@ -6,6 +6,7 @@ namespace App\StateMachine;
 
 use App\StateMachine\Contract\ActionInterface;
 use App\StateMachine\Contract\EngineInterface;
+use App\StateMachine\Contract\NextTransitionFinderInterface;
 use App\StateMachine\Contract\PostActionInterface;
 use App\StateMachine\Contract\ProcessDefinitionInterface;
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
@@ -19,6 +20,7 @@ final class Engine implements EngineInterface
 {
     public function __construct(
         private readonly ProcessExecutionContextFactory $contextFactory,
+        private readonly NextTransitionFinderInterface $nextTransitionFinder,
     ) {
     }
 
@@ -34,30 +36,32 @@ final class Engine implements EngineInterface
         StateInterface $currentState,
         ProcessExecutionContextInterface $context,
     ): ProcessExecutionContextInterface {
-        $visitedStates = new \SplObjectStorage();
-        $nextTransition = $currentState->getNextTransition();
+        $visitedStates = new \WeakMap();
+        $nextTransition = $this->nextTransitionFinder->findStateNextTransition($context, $currentState);
 
         while (
             ProcessExecutionContextStatusEnum::RUNNING === $context->getStatus()
             && null !== $nextTransition
         ) {
             $toState = $nextTransition->getToState();
-
             // Detect circular transition
-            if ($visitedStates->contains($toState)) {
+            if (isset($visitedStates[$toState])) {
                 throw new CircularTransitionException('Circular transition detected');
             }
-            $visitedStates->attach($toState);
-
+            $visitedStates[$toState] = true;
             try {
                 $context->setCurrentTransition($nextTransition);
                 $this->executeAction($nextTransition->getAction(), $context->getParameters());
                 $this->executePostActions($nextTransition->getPostActions(), $context->getParameters());
                 $context->setLastState($toState);
                 $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
-                $nextTransition = $toState->getNextTransition();
-            } catch (\Throwable) {
-                $context->setStatus(ProcessExecutionContextStatusEnum::FAILED);
+                $nextTransition = $this->nextTransitionFinder->findStateNextTransition(
+                    $context,
+                    $toState,
+                );
+            } catch (\Throwable $exception) {
+                $context->setStatus(ProcessExecutionContextStatusEnum::FAILED)
+                    ->setException($exception);
             }
         }
 

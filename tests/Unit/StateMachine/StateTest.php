@@ -17,11 +17,11 @@ final class StateTest extends TestCase
         $this->assertSame($stateName, $state->getName());
     }
 
-    public function testGetNextTransitionInitiallyReturnsNull(): void
+    public function testGetNextTransitionsInitiallyReturnsEmptyArray(): void
     {
         $state = new State('test');
 
-        $this->assertNull($state->getNextTransition());
+        $this->assertSame([], $state->getNextTransitions());
     }
 
     public function testThenCreatesTransitionToTargetState(): void
@@ -35,17 +35,19 @@ final class StateTest extends TestCase
         $this->assertSame($toState, $transition->getToState());
     }
 
-    public function testThenSetsNextTransition(): void
+    public function testThenAddsTransitionToNextTransitions(): void
     {
         $fromState = new State('from');
         $toState = new State('to');
 
         $transition = $fromState->then($toState);
 
-        $this->assertSame($transition, $fromState->getNextTransition());
+        $nextTransitions = $fromState->getNextTransitions();
+        $this->assertCount(1, $nextTransitions);
+        $this->assertSame($transition, $nextTransitions[0]);
     }
 
-    public function testThenOverwritesPreviousTransition(): void
+    public function testThenAllowsMultipleTransitions(): void
     {
         $fromState = new State('from');
         $firstToState = new State('first');
@@ -54,9 +56,10 @@ final class StateTest extends TestCase
         $firstTransition = $fromState->then($firstToState);
         $secondTransition = $fromState->then($secondToState);
 
-        $this->assertNotSame($firstTransition, $secondTransition);
-        $this->assertSame($secondTransition, $fromState->getNextTransition());
-        $this->assertSame($secondToState, $fromState->getNextTransition()->getToState());
+        $nextTransitions = $fromState->getNextTransitions();
+        $this->assertCount(2, $nextTransitions);
+        $this->assertContains($firstTransition, $nextTransitions);
+        $this->assertContains($secondTransition, $nextTransitions);
     }
 
     public function testStateCanTransitionToItself(): void

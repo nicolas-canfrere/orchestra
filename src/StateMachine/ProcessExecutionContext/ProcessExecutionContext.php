@@ -10,10 +10,11 @@ use App\StateMachine\Contract\TransitionInterface;
 
 final class ProcessExecutionContext implements ProcessExecutionContextInterface
 {
-    private StateInterface $lastState;
+    private ?StateInterface $lastState = null;
     /** @var ExecutedTransition[] */
     private array $executedTransitions = [];
-    private TransitionInterface $currentTransition;
+    private ?TransitionInterface $currentTransition = null;
+    private ?\Throwable $exception = null;
 
     /**
      * @param array<string, mixed> $parameters
@@ -36,12 +37,12 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
         return $this->executedTransitions;
     }
 
-    public function getCurrentTransition(): TransitionInterface
+    public function getCurrentTransition(): ?TransitionInterface
     {
         return $this->currentTransition;
     }
 
-    public function setCurrentTransition(TransitionInterface $currentTransition): ProcessExecutionContext
+    public function setCurrentTransition(TransitionInterface $currentTransition): self
     {
         $this->currentTransition = $currentTransition;
 
@@ -58,7 +59,7 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
         return $this->status;
     }
 
-    public function setStatus(ProcessExecutionContextStatusEnum $status): ProcessExecutionContext
+    public function setStatus(ProcessExecutionContextStatusEnum $status): self
     {
         $this->status = $status;
 
@@ -70,12 +71,12 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
         return $this->createdAt;
     }
 
-    public function getLastState(): StateInterface
+    public function getLastState(): ?StateInterface
     {
         return $this->lastState;
     }
 
-    public function setLastState(StateInterface $lastState): ProcessExecutionContext
+    public function setLastState(?StateInterface $lastState): self
     {
         $this->lastState = $lastState;
 
@@ -85,5 +86,17 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
     public function getParameters(): array
     {
         return $this->parameters;
+    }
+
+    public function getException(): ?\Throwable
+    {
+        return $this->exception;
+    }
+
+    public function setException(?\Throwable $exception): ProcessExecutionContext
+    {
+        $this->exception = $exception;
+
+        return $this;
     }
 }

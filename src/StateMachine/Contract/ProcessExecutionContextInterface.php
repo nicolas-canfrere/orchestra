@@ -12,13 +12,13 @@ interface ProcessExecutionContextInterface
 {
     public function getStatus(): ProcessExecutionContextStatusEnum;
 
-    public function setLastState(StateInterface $lastState): ProcessExecutionContext;
+    public function setLastState(?StateInterface $lastState): self;
 
     public function getCreatedAt(): \DateTimeImmutable;
 
-    public function getLastState(): StateInterface;
+    public function getLastState(): ?StateInterface;
 
-    public function setStatus(ProcessExecutionContextStatusEnum $status): ProcessExecutionContext;
+    public function setStatus(ProcessExecutionContextStatusEnum $status): self;
 
     public function getProcessId(): string;
 
@@ -29,12 +29,16 @@ interface ProcessExecutionContextInterface
      */
     public function getExecutedTransitions(): array;
 
-    public function getCurrentTransition(): TransitionInterface;
+    public function getCurrentTransition(): ?TransitionInterface;
 
-    public function setCurrentTransition(TransitionInterface $currentTransition): ProcessExecutionContext;
+    public function setCurrentTransition(TransitionInterface $currentTransition): self;
 
     /**
      * @return array<string, mixed>
      */
     public function getParameters(): array;
+
+    public function getException(): ?\Throwable;
+
+    public function setException(?\Throwable $exception): ProcessExecutionContext;
 }

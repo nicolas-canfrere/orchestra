@@ -24,7 +24,7 @@ final class TransitionTest extends TestCase
 
     public function testConstructorSetsFromAndToStates(): void
     {
-        $transition = new Transition($this->fromState, $this->toState);
+        $transition = new Transition($this->fromState, [], $this->toState);
 
         $this->assertSame($this->fromState, $transition->getFromState());
         $this->assertSame($this->toState, $transition->getToState());
@@ -32,7 +32,7 @@ final class TransitionTest extends TestCase
 
     public function testGetActionInitiallyReturnsNull(): void
     {
-        $transition = new Transition($this->fromState, $this->toState);
+        $transition = new Transition($this->fromState, [], $this->toState);
 
         $this->assertNull($transition->getAction());
     }
@@ -40,7 +40,7 @@ final class TransitionTest extends TestCase
     public function testWithActionSetsAction(): void
     {
         $action = $this->createMock(ActionInterface::class);
-        $transition = new Transition($this->fromState, $this->toState);
+        $transition = new Transition($this->fromState, [], $this->toState);
 
         $result = $transition->withAction($action);
 
@@ -51,7 +51,7 @@ final class TransitionTest extends TestCase
     public function testTransitionFromStateToItself(): void
     {
         $state = new State('self');
-        $transition = new Transition($state, $state);
+        $transition = new Transition($state, [], $state);
 
         $this->assertSame($state, $transition->getFromState());
         $this->assertSame($state, $transition->getToState());
@@ -61,7 +61,7 @@ final class TransitionTest extends TestCase
     {
         $fromState = new State('same');
         $toState = new State('same'); // Same name, different instance
-        $transition = new Transition($fromState, $toState);
+        $transition = new Transition($fromState, [], $toState);
 
         $this->assertSame($fromState, $transition->getFromState());
         $this->assertSame($toState, $transition->getToState());
@@ -71,7 +71,7 @@ final class TransitionTest extends TestCase
     public function testActionCanNotBeOverride(): void
     {
         $action = $this->createMock(ActionInterface::class);
-        $transition = new Transition($this->fromState, $this->toState);
+        $transition = new Transition($this->fromState, [], $this->toState);
         $this->expectException(TransitionActionAlreadyDefined::class);
 
         $transition->withAction($action)->withAction($action);
@@ -79,13 +79,37 @@ final class TransitionTest extends TestCase
 
     public function testMultipleTransitionsWithSameStates(): void
     {
-        $transition1 = new Transition($this->fromState, $this->toState);
-        $transition2 = new Transition($this->fromState, $this->toState);
+        $transition1 = new Transition($this->fromState, [], $this->toState);
+        $transition2 = new Transition($this->fromState, [], $this->toState);
 
         $this->assertNotSame($transition1, $transition2);
         $this->assertSame($this->fromState, $transition1->getFromState());
         $this->assertSame($this->fromState, $transition2->getFromState());
         $this->assertSame($this->toState, $transition1->getToState());
         $this->assertSame($this->toState, $transition2->getToState());
+    }
+
+    public function testThenSetsToState(): void
+    {
+        $transition = new Transition($this->fromState);
+
+        $result = $transition->then($this->toState);
+
+        $this->assertSame($this->toState, $transition->getToState());
+        $this->assertSame($transition, $result); // Fluent interface
+    }
+
+    public function testGetConditionsInitiallyReturnsEmptyArray(): void
+    {
+        $transition = new Transition($this->fromState);
+
+        $this->assertSame([], $transition->getConditions());
+    }
+
+    public function testGetPostActionsInitiallyReturnsEmptyArray(): void
+    {
+        $transition = new Transition($this->fromState);
+
+        $this->assertSame([], $transition->getPostActions());
     }
 }

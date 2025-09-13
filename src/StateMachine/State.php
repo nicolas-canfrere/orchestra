@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\StateMachine;
 
+use App\StateMachine\Condition\AlwaysValidCondition;
+use App\StateMachine\Contract\ConditionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 
 final class State implements StateInterface
 {
-    private ?TransitionInterface $nextTransition = null;
+    /**
+     * @var TransitionInterface[]
+     */
+    private array $nextTransitions = [];
 
     public function __construct(
         private readonly string $name,
@@ -19,11 +24,23 @@ final class State implements StateInterface
         }
     }
 
+    /**
+     * @param ConditionInterface[] $conditions
+     */
+    public function when(array $conditions): TransitionInterface
+    {
+        $nextTransition = new Transition($this, conditions: $conditions);
+        $this->nextTransitions[] = $nextTransition;
+
+        return $nextTransition;
+    }
+
     public function then(StateInterface $toState): TransitionInterface
     {
-        $this->nextTransition = new Transition($this, $toState);
+        $nextTransition = $this->when([new AlwaysValidCondition()]);
+        $nextTransition->then($toState);
 
-        return $this->nextTransition;
+        return $nextTransition;
     }
 
     public function getName(): string
@@ -31,8 +48,11 @@ final class State implements StateInterface
         return $this->name;
     }
 
-    public function getNextTransition(): ?TransitionInterface
+    /**
+     * @return TransitionInterface[]
+     */
+    public function getNextTransitions(): array
     {
-        return $this->nextTransition;
+        return $this->nextTransitions;
     }
 }

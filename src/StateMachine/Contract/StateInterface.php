@@ -8,7 +8,10 @@ interface StateInterface
 {
     public function getName(): string;
 
-    public function getNextTransition(): ?TransitionInterface;
-
     public function then(StateInterface $toState): TransitionInterface;
+
+    /**
+     * @return TransitionInterface[]
+     */
+    public function getNextTransitions(): array;
 }

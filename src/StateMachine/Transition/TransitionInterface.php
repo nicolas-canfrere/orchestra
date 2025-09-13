@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\Contract;
+namespace App\StateMachine\Transition;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
 use App\StateMachine\Condition\ConditionInterface;
+use App\StateMachine\Contract\StateInterface;
 
 interface TransitionInterface
 {

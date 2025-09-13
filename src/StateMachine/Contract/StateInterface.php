@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\StateMachine\Contract;
 
+use App\StateMachine\Transition\TransitionInterface;
+
 interface StateInterface
 {
     public function getName(): string;

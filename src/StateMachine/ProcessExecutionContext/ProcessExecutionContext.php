@@ -6,7 +6,7 @@ namespace App\StateMachine\ProcessExecutionContext;
 
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
-use App\StateMachine\Contract\TransitionInterface;
+use App\StateMachine\Transition\TransitionInterface;
 
 final class ProcessExecutionContext implements ProcessExecutionContextInterface
 {

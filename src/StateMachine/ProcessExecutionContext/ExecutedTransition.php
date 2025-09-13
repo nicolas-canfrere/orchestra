@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\StateMachine\ProcessExecutionContext;
 
-use App\StateMachine\Contract\TransitionInterface;
+use App\StateMachine\Transition\TransitionInterface;
 
 final class ExecutedTransition
 {

@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine;
+namespace App\StateMachine\Transition;
 
-use App\StateMachine\Contract\NextTransitionFinderInterface;
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
-use App\StateMachine\Contract\TransitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
 
 final class NextTransitionFinder implements NextTransitionFinderInterface

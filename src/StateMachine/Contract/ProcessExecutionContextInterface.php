@@ -7,6 +7,7 @@ namespace App\StateMachine\Contract;
 use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
+use App\StateMachine\Transition\TransitionInterface;
 
 interface ProcessExecutionContextInterface
 {

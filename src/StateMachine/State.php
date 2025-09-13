@@ -7,7 +7,8 @@ namespace App\StateMachine;
 use App\StateMachine\Condition\AlwaysValidCondition;
 use App\StateMachine\Condition\ConditionInterface;
 use App\StateMachine\Contract\StateInterface;
-use App\StateMachine\Contract\TransitionInterface;
+use App\StateMachine\Transition\Transition;
+use App\StateMachine\Transition\TransitionInterface;
 
 final class State implements StateInterface
 {

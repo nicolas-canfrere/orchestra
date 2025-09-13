@@ -6,9 +6,9 @@ namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Contract\StateInterface;
-use App\StateMachine\Exception\TransitionActionAlreadyDefined;
 use App\StateMachine\State;
-use App\StateMachine\Transition;
+use App\StateMachine\Transition\Transition;
+use App\StateMachine\Transition\TransitionActionAlreadyDefined;
 use PHPUnit\Framework\TestCase;
 
 final class TransitionTest extends TestCase

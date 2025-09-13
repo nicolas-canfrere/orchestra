@@ -11,23 +11,24 @@ Orchestra is a Symfony-based state machine framework built in PHP 8.2+. The core
 ### State Machine Design
 The project implements a finite state machine with the following core components:
 
-- **Engine** (`src/StateMachine/Engine.php`): Main orchestration engine that launches and executes state transitions with integrated NextTransitionFinder
-- **ProcessDefinition**: Defines workflow processes with initialization and start state management
-- **ProcessExecutionContext**: Manages execution context with UUID generation and status tracking
-- **State** (`src/StateMachine/State.php`): Represents workflow states with fluent transition creation via `then()` method
-- **Transition** (`src/StateMachine/Transition.php`): Manages state-to-state transitions with action execution, post-actions, and conditions
-- **Action**: Executable business logic attached to transitions via `withAction()` method
-- **PostAction**: Actions executed after transition completion for cleanup or side effects
+- **Engine** (`src/StateMachine/Engine/Engine.php`): Main orchestration engine that launches and executes state transitions with integrated NextTransitionFinder
+- **ProcessDefinition** (`src/StateMachine/ProcessExecutionContext/ProcessDefinitionInterface.php`): Defines workflow processes with initialization and start state management
+- **ProcessExecutionContext** (`src/StateMachine/ProcessExecutionContext/`): Manages execution context with UUID generation and status tracking
+- **State** (`src/StateMachine/State/State.php`): Represents workflow states with fluent transition creation via `then()` method
+- **Transition** (`src/StateMachine/Transition/Transition.php`): Manages state-to-state transitions with action execution, post-actions, and conditions
+- **Action** (`src/StateMachine/Action/ActionInterface.php`): Executable business logic attached to transitions via `withAction()` method
+- **PostAction** (`src/StateMachine/Action/PostActionInterface.php`): Actions executed after transition completion for cleanup or side effects
 - **Condition** (`src/StateMachine/Condition/`): Validation logic for transition eligibility
-- **NextTransitionFinder** (`src/StateMachine/NextTransitionFinder.php`): Service for finding the next valid transition based on conditions
+- **NextTransitionFinder** (`src/StateMachine/Transition/NextTransitionFinder.php`): Service for finding the next valid transition based on conditions
 
 ### Key Patterns
-- **Interface Segregation**: All components implement focused contracts in `src/StateMachine/Contract/`
+- **Interface Segregation**: All components implement focused contracts with interfaces in their respective folders
 - **Fluent Builder**: States use fluent interface for transition chaining: `$state->then($nextState)->withAction($action)`
 - **Conditional Execution**: Transitions support conditions via `ConditionInterface` for execution eligibility
 - **Post-Processing**: Post-actions provide cleanup and side effects after transition completion
 - **Immutable Design**: States and transitions are designed with readonly properties where applicable
 - **Strict Typing**: All code uses `declare(strict_types=1)` and PHP 8.2+ features
+- **Folder-Based Organization**: Components are organized by domain (Engine, State, Transition, etc.) with interfaces alongside implementations
 
 ## Development Commands
 
@@ -61,10 +62,13 @@ make composer-cli
 ## Project Structure
 
 - `src/StateMachine/`: Core state machine implementation
-- `src/StateMachine/Contract/`: Interface definitions for all components
+- `src/StateMachine/Engine/`: Main orchestration engine and related exceptions
+- `src/StateMachine/State/`: State definitions and interfaces
+- `src/StateMachine/Transition/`: Transition logic and NextTransitionFinder
+- `src/StateMachine/Action/`: Action and PostAction interfaces and implementations
 - `src/StateMachine/Condition/`: Condition implementations for transition validation
-- `src/StateMachine/Implem/`: Concrete implementations (ProcessExecutionContext, IdGenerator)
 - `src/StateMachine/ProcessExecutionContext/`: Process execution context management
+- `src/StateMachine/Implem/`: Concrete implementations (IdGenerator utilities)
 - `tests/Unit/`: PHPUnit tests organized by component
 - `config/`: Symfony configuration files
 - `docs/`: Project documentation and architectural decisions
@@ -118,3 +122,15 @@ The Engine now features:
 - Contract-first development with interface segregation
 - UUID-based process identification for traceability
 - Separation of concerns between validation, execution, and post-processing
+
+### Recent Refactoring (2025-09-13)
+The codebase has been reorganized into domain-specific folders for better maintainability:
+- **Engine folder**: Contains the main Engine class, EngineInterface, and related exceptions (CircularTransitionException)
+- **State folder**: Houses State class and StateInterface for workflow state management
+- **Transition folder**: Contains Transition class, NextTransitionFinder, and transition-related interfaces
+- **Action folder**: Separates ActionInterface and PostActionInterface for better interface segregation
+- **Condition folder**: Contains all condition-related logic including AlwaysValidCondition and ConditionInterface
+- **ProcessExecutionContext folder**: Comprehensive process context management with factory patterns and status enums
+- **Implem folder**: Concrete utility implementations like SfProcessExecutionContextIdGenerator
+
+This organization improves code discoverability and follows domain-driven design principles.

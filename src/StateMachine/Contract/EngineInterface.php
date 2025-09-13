@@ -8,7 +8,10 @@ interface EngineInterface
 {
     public function launch(ProcessDefinitionInterface $processDefinition): void;
 
-    public function executeTransition(StateInterface $currentState): void;
+    public function executeTransition(
+        StateInterface $currentState,
+        ProcessExecutionContextInterface $context,
+    ): ProcessExecutionContextInterface;
 
     public function executeAction(?ActionInterface $action): void;
 }

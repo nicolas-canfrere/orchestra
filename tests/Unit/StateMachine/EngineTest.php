@@ -6,10 +6,15 @@ namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Contract\ActionInterface;
 use App\StateMachine\Contract\ProcessDefinitionInterface;
+use App\StateMachine\Contract\ProcessExecutionContextIdGeneratorInterface;
+use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 use App\StateMachine\Engine;
 use App\StateMachine\Exception\CircularTransitionException;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
 use PHPUnit\Framework\TestCase;
 
 final class EngineTest extends TestCase
@@ -18,12 +23,15 @@ final class EngineTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->engine = new Engine();
+        $idGenerator = $this->createMock(ProcessExecutionContextIdGeneratorInterface::class);
+        $contextFactory = new ProcessExecutionContextFactory($idGenerator);
+        $this->engine = new Engine($contextFactory);
     }
 
     public function testLaunch(): void
     {
         $startState = $this->createMockState('start');
+
         $processDefinition = $this->createMock(ProcessDefinitionInterface::class);
         $processDefinition->expects($this->once())
             ->method('getStartState')
@@ -35,20 +43,22 @@ final class EngineTest extends TestCase
     public function testExecuteTransitionWithoutNextTransition(): void
     {
         $state = $this->createMockState('end');
+        $context = $this->createMockContext();
 
         $this->expectNotToPerformAssertions();
-        $this->engine->executeTransition($state);
+        $this->engine->executeTransition($state, $context);
     }
 
     public function testExecuteTransitionWithSingleTransition(): void
     {
         $endState = $this->createMockState('end');
         $action = $this->createMockAction();
+        $context = $this->createMockContext();
 
         $transition = $this->createMockTransition($this->createMockState('middle'), $endState, $action);
         $startState = $this->createMockState('start', $transition);
 
-        $this->engine->executeTransition($startState);
+        $this->engine->executeTransition($startState, $context);
     }
 
     public function testExecuteTransitionWithMultipleTransitions(): void
@@ -56,6 +66,7 @@ final class EngineTest extends TestCase
         $endState = $this->createMockState('end');
         $action1 = $this->createMockAction();
         $action2 = $this->createMockAction();
+        $context = $this->createMockContext();
 
         $transition2 = $this->createMockTransition($this->createMockState('middle'), $endState, $action2);
         $middleState = $this->createMockState('middle', $transition2);
@@ -63,7 +74,7 @@ final class EngineTest extends TestCase
         $transition1 = $this->createMockTransition($this->createMockState('start'), $middleState, $action1);
         $startState = $this->createMockState('start', $transition1);
 
-        $this->engine->executeTransition($startState);
+        $this->engine->executeTransition($startState, $context);
     }
 
     public function testExecuteTransitionWithNullAction(): void
@@ -71,9 +82,10 @@ final class EngineTest extends TestCase
         $endState = $this->createMockState('end');
         $transition = $this->createMockTransition($this->createMockState('start'), $endState, null);
         $startState = $this->createMockState('start', $transition);
+        $context = $this->createMockContext();
 
         $this->expectNotToPerformAssertions();
-        $this->engine->executeTransition($startState);
+        $this->engine->executeTransition($startState, $context);
     }
 
     public function testExecuteActionWithNull(): void
@@ -128,7 +140,8 @@ final class EngineTest extends TestCase
         $this->expectException(CircularTransitionException::class);
         $this->expectExceptionMessage('Circular transition detected');
 
-        $this->engine->executeTransition($state1);
+        $context = $this->createMockContext();
+        $this->engine->executeTransition($state1, $context);
     }
 
     private function createMockState(string $name = 'test', ?TransitionInterface $nextTransition = null): StateInterface
@@ -156,5 +169,17 @@ final class EngineTest extends TestCase
         $action->expects($this->once())->method('run');
 
         return $action;
+    }
+
+    private function createMockContext(): ProcessExecutionContextInterface
+    {
+        $context = new ProcessExecutionContext(
+            'test-id',
+            ProcessExecutionContextStatusEnum::RUNNING,
+            new \DateTimeImmutable()
+        );
+        $context->setLastState($this->createMockState('initial'));
+
+        return $context;
     }
 }

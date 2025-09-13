@@ -27,6 +27,7 @@ final class ExampleController extends AbstractController
     )]
     public function __invoke(Request $request): Response
     {
+        /** @var array<string, mixed> $parameters */
         $parameters = \json_decode($request->getContent(), true);
         $this->engine->launch($this->processDefinition, $parameters);
 

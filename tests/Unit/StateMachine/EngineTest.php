@@ -13,6 +13,7 @@ use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextIdGeneratorInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextWriterInterface;
 use App\StateMachine\State\StateInterface;
 use App\StateMachine\Transition\NextTransitionFinderInterface;
 use App\StateMachine\Transition\TransitionInterface;
@@ -32,7 +33,11 @@ final class EngineTest extends TestCase
         $idGenerator = $this->createMock(ProcessExecutionContextIdGeneratorInterface::class);
         $contextFactory = new ProcessExecutionContextFactory($idGenerator);
         $this->nextTransitionFinder = $this->createMock(NextTransitionFinderInterface::class);
-        $this->engine = new Engine($contextFactory, $this->nextTransitionFinder);
+        $this->engine = new Engine(
+            $contextFactory,
+            $this->nextTransitionFinder,
+            $this->createMock(ProcessExecutionContextWriterInterface::class)
+        );
     }
 
     public function testLaunch(): void

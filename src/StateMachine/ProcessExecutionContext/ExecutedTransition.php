@@ -19,6 +19,9 @@ final class ExecutedTransition implements \JsonSerializable
         return new self($transition, new \DateTimeImmutable());
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function jsonSerialize(): array
     {
         $transition = sprintf(

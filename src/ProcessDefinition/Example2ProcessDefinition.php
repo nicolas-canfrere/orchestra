@@ -12,7 +12,6 @@ use App\StateMachine\State\StateInterface;
 
 final class Example2ProcessDefinition implements ProcessDefinitionInterface
 {
-
     private StateInterface $startState;
 
     public function __construct()

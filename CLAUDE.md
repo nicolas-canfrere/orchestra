@@ -12,7 +12,7 @@ Orchestra is a Symfony-based state machine framework built in PHP 8.2+. The core
 The project implements a finite state machine with the following core components:
 
 - **Engine** (`src/StateMachine/Engine/Engine.php`): Main orchestration engine that launches and executes state transitions with integrated NextTransitionFinder
-- **ProcessDefinition** (`src/StateMachine/ProcessExecutionContext/ProcessDefinitionInterface.php`): Defines workflow processes with initialization and start state management
+- **ProcessDefinition** (`src/StateMachine/ProcessDefinition/ProcessDefinitionInterface.php`): Defines workflow processes with initialization and start state management
 - **ProcessExecutionContext** (`src/StateMachine/ProcessExecutionContext/`): Manages execution context with UUID generation and status tracking
 - **State** (`src/StateMachine/State/State.php`): Represents workflow states with fluent transition creation via `then()` method
 - **Transition** (`src/StateMachine/Transition/Transition.php`): Manages state-to-state transitions with action execution, post-actions, and conditions

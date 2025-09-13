@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\Contract;
+namespace App\StateMachine\Condition;
+
+use App\StateMachine\Contract\ProcessExecutionContextInterface;
 
 interface ConditionInterface
 {

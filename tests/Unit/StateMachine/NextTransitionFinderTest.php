@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\StateMachine;
 
-use App\StateMachine\Contract\ConditionInterface;
+use App\StateMachine\Condition\ConditionInterface;
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;

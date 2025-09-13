@@ -6,7 +6,7 @@ namespace App\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
-use App\StateMachine\Contract\ConditionInterface;
+use App\StateMachine\Condition\ConditionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 use App\StateMachine\Exception\TransitionActionAlreadyDefined;

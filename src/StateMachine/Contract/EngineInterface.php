@@ -6,12 +6,18 @@ namespace App\StateMachine\Contract;
 
 interface EngineInterface
 {
-    public function launch(ProcessDefinitionInterface $processDefinition): void;
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function launch(ProcessDefinitionInterface $processDefinition, array $parameters = []): void;
 
     public function executeTransition(
         StateInterface $currentState,
         ProcessExecutionContextInterface $context,
     ): ProcessExecutionContextInterface;
 
-    public function executeAction(?ActionInterface $action): void;
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function executeAction(?ActionInterface $action, array $parameters): void;
 }

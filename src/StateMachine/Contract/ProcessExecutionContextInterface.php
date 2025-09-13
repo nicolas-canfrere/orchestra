@@ -32,4 +32,9 @@ interface ProcessExecutionContextInterface
     public function getCurrentTransition(): TransitionInterface;
 
     public function setCurrentTransition(TransitionInterface $currentTransition): ProcessExecutionContext;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getParameters(): array;
 }

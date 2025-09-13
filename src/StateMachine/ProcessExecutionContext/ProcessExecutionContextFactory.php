@@ -15,13 +15,18 @@ final readonly class ProcessExecutionContextFactory
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function create(
         StateInterface $lastState,
+        array $parameters,
     ): ProcessExecutionContextInterface {
         $pec = new ProcessExecutionContext(
             $this->idGenerator->generate(),
             ProcessExecutionContextStatusEnum::RUNNING,
             new \DateTimeImmutable(),
+            $parameters,
         );
         $pec->setLastState($lastState);
 

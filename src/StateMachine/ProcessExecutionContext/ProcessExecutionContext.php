@@ -15,10 +15,14 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
     private array $executedTransitions = [];
     private TransitionInterface $currentTransition;
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function __construct(
         private readonly string $processId,
         private ProcessExecutionContextStatusEnum $status,
         private readonly \DateTimeImmutable $createdAt,
+        private readonly array $parameters,
     ) {
     }
 
@@ -76,5 +80,10 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
         $this->lastState = $lastState;
 
         return $this;
+    }
+
+    public function getParameters(): array
+    {
+        return $this->parameters;
     }
 }

@@ -6,5 +6,8 @@ namespace App\StateMachine\Contract;
 
 interface ActionInterface
 {
-    public function run(): void;
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function run(array $parameters): void;
 }

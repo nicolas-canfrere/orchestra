@@ -21,10 +21,10 @@ final class Engine implements EngineInterface
     ) {
     }
 
-    public function launch(ProcessDefinitionInterface $processDefinition): void
+    public function launch(ProcessDefinitionInterface $processDefinition, array $parameters = []): void
     {
         $lastState = $processDefinition->getStartState();
-        $processExecutionContext = $this->contextFactory->create($lastState);
+        $processExecutionContext = $this->contextFactory->create($lastState, $parameters);
         $this->executeTransition($lastState, $processExecutionContext);
         $this->finishAndSaveContext($processExecutionContext);
     }
@@ -46,7 +46,7 @@ final class Engine implements EngineInterface
             $visitedStates->attach($toState);
 
             $context->setCurrentTransition($nextTransition);
-            $this->executeAction($nextTransition->getAction());
+            $this->executeAction($nextTransition->getAction(), $context->getParameters());
             $context->setLastState($toState);
             $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
             $nextTransition = $toState->getNextTransition();
@@ -57,9 +57,12 @@ final class Engine implements EngineInterface
         return $context;
     }
 
-    public function executeAction(?ActionInterface $action): void
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    public function executeAction(?ActionInterface $action, array $parameters): void
     {
-        $action?->run();
+        $action?->run($parameters);
     }
 
     private function finishAndSaveContext(ProcessExecutionContextInterface $context): void

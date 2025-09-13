@@ -91,13 +91,13 @@ final class EngineTest extends TestCase
     public function testExecuteActionWithNull(): void
     {
         $this->expectNotToPerformAssertions();
-        $this->engine->executeAction(null);
+        $this->engine->executeAction(null, []);
     }
 
     public function testExecuteActionWithValidAction(): void
     {
         $action = $this->createMockAction();
-        $this->engine->executeAction($action);
+        $this->engine->executeAction($action, []);
     }
 
     public function testCompleteWorkflow(): void
@@ -176,7 +176,8 @@ final class EngineTest extends TestCase
         $context = new ProcessExecutionContext(
             'test-id',
             ProcessExecutionContextStatusEnum::RUNNING,
-            new \DateTimeImmutable()
+            new \DateTimeImmutable(),
+            []
         );
         $context->setLastState($this->createMockState('initial'));
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\StateMachine;
 
-use App\StateMachine\Contract\ActionInterface;
+use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Exception\TransitionActionAlreadyDefined;
 use App\StateMachine\State;

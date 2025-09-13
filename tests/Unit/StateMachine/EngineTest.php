@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\StateMachine;
 
-use App\StateMachine\Contract\ActionInterface;
+use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Contract\NextTransitionFinderInterface;
 use App\StateMachine\Contract\ProcessDefinitionInterface;
 use App\StateMachine\Contract\ProcessExecutionContextIdGeneratorInterface;

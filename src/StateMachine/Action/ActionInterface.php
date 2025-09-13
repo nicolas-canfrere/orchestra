@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\Contract;
+namespace App\StateMachine\Action;
 
 interface ActionInterface
 {

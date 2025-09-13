@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\StateMachine\Contract;
 
+use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Action\PostActionInterface;
+
 interface TransitionInterface
 {
     public function getFromState(): StateInterface;

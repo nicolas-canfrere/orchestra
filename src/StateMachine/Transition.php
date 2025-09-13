@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\StateMachine;
 
-use App\StateMachine\Contract\ActionInterface;
+use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Action\PostActionInterface;
 use App\StateMachine\Contract\ConditionInterface;
-use App\StateMachine\Contract\PostActionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 use App\StateMachine\Exception\TransitionActionAlreadyDefined;

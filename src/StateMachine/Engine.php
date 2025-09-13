@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\StateMachine;
 
-use App\StateMachine\Contract\ActionInterface;
+use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Action\PostActionInterface;
 use App\StateMachine\Contract\EngineInterface;
 use App\StateMachine\Contract\NextTransitionFinderInterface;
-use App\StateMachine\Contract\PostActionInterface;
 use App\StateMachine\Contract\ProcessDefinitionInterface;
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;

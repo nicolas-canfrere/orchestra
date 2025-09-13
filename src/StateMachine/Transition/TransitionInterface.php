@@ -7,7 +7,7 @@ namespace App\StateMachine\Transition;
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
 use App\StateMachine\Condition\ConditionInterface;
-use App\StateMachine\Contract\StateInterface;
+use App\StateMachine\State\StateInterface;
 
 interface TransitionInterface
 {

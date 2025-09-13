@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
-use App\StateMachine\Contract\StateInterface;
-use App\StateMachine\State;
+use App\StateMachine\State\State;
+use App\StateMachine\State\StateInterface;
 use App\StateMachine\Transition\Transition;
 use App\StateMachine\Transition\TransitionActionAlreadyDefined;
 use PHPUnit\Framework\TestCase;

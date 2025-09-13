@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\StateMachine;
 
-use App\StateMachine\State;
+use App\StateMachine\State\State;
 use PHPUnit\Framework\TestCase;
 
 final class StateTest extends TestCase

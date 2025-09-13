@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\StateMachine\Transition;
 
-use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
+use App\StateMachine\State\StateInterface;
 
 final class NextTransitionFinder implements NextTransitionFinderInterface
 {

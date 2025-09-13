@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine;
+namespace App\StateMachine\State;
 
 use App\StateMachine\Condition\AlwaysValidCondition;
 use App\StateMachine\Condition\ConditionInterface;
-use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Transition\Transition;
 use App\StateMachine\Transition\TransitionInterface;
 

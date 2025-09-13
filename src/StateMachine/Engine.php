@@ -6,6 +6,7 @@ namespace App\StateMachine;
 
 use App\StateMachine\Contract\ActionInterface;
 use App\StateMachine\Contract\EngineInterface;
+use App\StateMachine\Contract\PostActionInterface;
 use App\StateMachine\Contract\ProcessDefinitionInterface;
 use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
@@ -51,6 +52,7 @@ final class Engine implements EngineInterface
             try {
                 $context->setCurrentTransition($nextTransition);
                 $this->executeAction($nextTransition->getAction(), $context->getParameters());
+                $this->executePostActions($nextTransition->getPostActions(), $context->getParameters());
                 $context->setLastState($toState);
                 $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
                 $nextTransition = $toState->getNextTransition();
@@ -68,6 +70,21 @@ final class Engine implements EngineInterface
     public function executeAction(?ActionInterface $action, array $parameters): void
     {
         $action?->run($parameters);
+    }
+
+    /**
+     * @param PostActionInterface[] $postActions
+     * @param array<string, mixed> $parameters
+     */
+    public function executePostActions(array $postActions, array $parameters): void
+    {
+        foreach ($postActions as $postAction) {
+            try {
+                $postAction->run($parameters);
+            } catch (\Throwable) {
+                continue;
+            }
+        }
     }
 
     private function finishAndSaveContext(ProcessExecutionContextInterface $context): void

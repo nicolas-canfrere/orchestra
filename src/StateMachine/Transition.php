@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace App\StateMachine;
 
 use App\StateMachine\Contract\ActionInterface;
+use App\StateMachine\Contract\PostActionInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Contract\TransitionInterface;
 use App\StateMachine\Exception\TransitionActionAlreadyDefined;
 
 final class Transition implements TransitionInterface
 {
+
     private ?ActionInterface $action = null;
+    /**
+     * @var PostActionInterface[]
+     */
+    private array $postActions = [];
 
     public function __construct(
         private readonly StateInterface $fromState,
@@ -37,6 +43,24 @@ final class Transition implements TransitionInterface
         $this->action = $action;
 
         return $this;
+    }
+
+    /**
+     * @param PostActionInterface[] $postActions
+     */
+    public function withPostActions(array $postActions): TransitionInterface
+    {
+        $this->postActions = $postActions;
+
+        return $this;
+    }
+
+    /**
+     * @return PostActionInterface[]
+     */
+    public function getPostActions(): array
+    {
+        return $this->postActions;
     }
 
     public function getAction(): ?ActionInterface

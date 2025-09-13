@@ -36,7 +36,10 @@ final class Engine implements EngineInterface
         $visitedStates = new \SplObjectStorage();
         $nextTransition = $currentState->getNextTransition();
 
-        while (null !== $nextTransition) {
+        while (
+            ProcessExecutionContextStatusEnum::RUNNING === $context->getStatus()
+            && null !== $nextTransition
+        ) {
             $toState = $nextTransition->getToState();
 
             // Detect circular transition
@@ -45,14 +48,16 @@ final class Engine implements EngineInterface
             }
             $visitedStates->attach($toState);
 
-            $context->setCurrentTransition($nextTransition);
-            $this->executeAction($nextTransition->getAction(), $context->getParameters());
-            $context->setLastState($toState);
-            $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
-            $nextTransition = $toState->getNextTransition();
+            try {
+                $context->setCurrentTransition($nextTransition);
+                $this->executeAction($nextTransition->getAction(), $context->getParameters());
+                $context->setLastState($toState);
+                $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
+                $nextTransition = $toState->getNextTransition();
+            } catch (\Throwable) {
+                $context->setStatus(ProcessExecutionContextStatusEnum::FAILED);
+            }
         }
-
-        $context->setStatus(ProcessExecutionContextStatusEnum::FINISHED);
 
         return $context;
     }

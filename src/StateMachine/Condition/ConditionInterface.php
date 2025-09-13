@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\StateMachine\Condition;
 
-use App\StateMachine\Contract\ProcessExecutionContextInterface;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 
 interface ConditionInterface
 {

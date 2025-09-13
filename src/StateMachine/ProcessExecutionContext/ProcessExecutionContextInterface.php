@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\StateMachine\Contract;
+namespace App\StateMachine\ProcessExecutionContext;
 
-use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
-use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
-use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
+use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Transition\TransitionInterface;
 
 interface ProcessExecutionContextInterface

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
-use App\StateMachine\Contract\ProcessDefinitionInterface;
-use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
+use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 
 interface EngineInterface
 {

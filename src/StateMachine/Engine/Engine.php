@@ -6,11 +6,11 @@ namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionInterface;
-use App\StateMachine\Contract\ProcessDefinitionInterface;
-use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
+use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
 use App\StateMachine\Transition\NextTransitionFinderInterface;
 

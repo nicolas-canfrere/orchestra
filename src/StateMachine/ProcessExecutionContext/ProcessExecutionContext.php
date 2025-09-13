@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\StateMachine\ProcessExecutionContext;
 
-use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Transition\TransitionInterface;
 

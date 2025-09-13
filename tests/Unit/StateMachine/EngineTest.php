@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
-use App\StateMachine\Contract\ProcessDefinitionInterface;
-use App\StateMachine\Contract\ProcessExecutionContextIdGeneratorInterface;
-use App\StateMachine\Contract\ProcessExecutionContextInterface;
 use App\StateMachine\Contract\StateInterface;
 use App\StateMachine\Engine\CircularTransitionException;
 use App\StateMachine\Engine\Engine;
+use App\StateMachine\ProcessExecutionContext\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextIdGeneratorInterface;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
 use App\StateMachine\Transition\NextTransitionFinderInterface;
 use App\StateMachine\Transition\TransitionInterface;

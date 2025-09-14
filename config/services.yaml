@@ -16,5 +16,8 @@ services:
     App\:
         resource: '../src/'
 
+    App\StateMachine\ProcessExecutionContext\ProcessExecutionContextWriterInterface:
+        class: App\StateMachine\Implem\DBALProcessExecutionContextWriter
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -64,15 +64,19 @@ make composer-cli
 - `src/StateMachine/`: Core state machine implementation
 - `src/StateMachine/Engine/`: Main orchestration engine and related exceptions
 - `src/StateMachine/State/`: State definitions and interfaces
-- `src/StateMachine/Transition/`: Transition logic and NextTransitionFinder
+- `src/StateMachine/Transition/`: Transition logic, NextTransitionFinder, and pause functionality
 - `src/StateMachine/Action/`: Action and PostAction interfaces and implementations
 - `src/StateMachine/Condition/`: Condition implementations for transition validation
-- `src/StateMachine/ProcessExecutionContext/`: Process execution context management
-- `src/StateMachine/Implem/`: Concrete implementations (IdGenerator utilities)
+- `src/StateMachine/ProcessExecutionContext/`: Process execution context management with persistence
+- `src/StateMachine/Implem/`: Concrete implementations (IdGenerator, database writers)
+- `src/ProcessDefinition/`: Process workflow definitions and examples
+- `src/Controller/`: Symfony controllers for API endpoints
 - `tests/Unit/`: PHPUnit tests organized by component
-- `config/`: Symfony configuration files
+- `config/`: Symfony configuration files including Doctrine setup
+- `migrations/`: Doctrine database migration files
+- `docker/`: Docker configuration (Nginx, PostgreSQL initialization)
 - `docs/`: Project documentation and architectural decisions
-- Docker-based development environment with Composer 2
+- Multi-service Docker environment with PHP 8.4, PostgreSQL 15, and Nginx
 
 ## Configuration Files
 
@@ -83,18 +87,38 @@ make composer-cli
 
 ## Development Notes
 
-The state machine has evolved beyond the initial development phase with a fully functional execution engine that supports:
-- Conditional transition execution with validation logic
-- Post-action execution for cleanup and side effects
-- Circular transition detection and error handling
-- Integration with NextTransitionFinder service for dynamic transition resolution
+The state machine has evolved into a production-ready workflow orchestration framework with comprehensive features:
+- **Pause-Driven Workflows**: Transitions can be marked for pause, enabling human approval gates and external system integration
+- **Database Persistence**: Full execution context storage with PostgreSQL and JSONB for flexible querying
+- **Conditional Execution**: Validation logic for transition eligibility with dynamic resolution
+- **Post-Action Pipeline**: Cleanup and side-effect operations after transition completion
+- **Error Handling**: Circular transition detection, action failure recovery, and comprehensive exception management
+- **Service Integration**: Dependency injection with Symfony services for all components
+
+The framework supports both simple linear workflows and complex branching processes with conditional logic, making it suitable for business process automation, approval workflows, and long-running orchestrations.
 
 When implementing new features, follow the established contract-first approach by defining interfaces before implementations.
 
 ## Recent Development
 
+### Transition Pause Feature (2025-09-14)
+The state machine now supports pausing workflows at specific transitions:
+- `isPaused()`: Check if a transition is marked for pause
+- `withPauseAfterTransition()`: Configure a transition to pause execution after completion
+- Engine integration: The execution engine respects pause flags and stops execution when encountered
+- Use cases: Long-running workflows, manual approval gates, external system integration points
+
+### Database Integration with Doctrine
+The project now includes full database persistence capabilities:
+- **Doctrine ORM Integration**: Added Doctrine bundle for ORM capabilities
+- **PostgreSQL Support**: Docker compose includes PostgreSQL database service with initialization
+- **Database Migration**: `Version20250914065924` creates `process_execution_context` table with UUID support
+- **Process Context Persistence**: `DBALProcessExecutionContextWriter` provides database storage for execution contexts
+- **JSONB Storage**: Executed transitions stored as JSONB for flexible querying
+- **Infrastructure**: Nginx reverse proxy and multi-service Docker environment
+
 ### Transition Conditions and Post-Actions
-Recent additions include enhanced transition management:
+Enhanced transition management includes:
 - `ConditionInterface`: Defines validation logic for transition eligibility
 - `ValidCondition`: Default always-valid condition implementation
 - `NextTransitionFinderInterface`: Service contract for finding next valid transitions
@@ -102,26 +126,38 @@ Recent additions include enhanced transition management:
 - Post-actions support for cleanup operations after transition completion
 
 ### Process Execution Context
-The project includes comprehensive process execution context management:
+Comprehensive process execution context management:
 - `ProcessExecutionContextInterface`: Defines execution context with UUID and status
 - `ProcessExecutionContextFactory`: Creates new execution contexts
+- `ProcessExecutionContextWriterInterface`: Contract for persisting execution contexts
+- `DBALProcessExecutionContextWriter`: Database implementation using Doctrine DBAL
 - `SfProcessExecutionContextIdGenerator`: Symfony UUID-based ID generation
-- `ProcessExecutionContextStatusEnum`: Tracks context lifecycle (Created, Running, Completed, Failed)
+- `ProcessExecutionContextStatusEnum`: Tracks context lifecycle (Created, Running, Completed, Failed, Paused)
 
 ### Engine Enhancements
 The Engine now features:
+- **Pause Support**: Execution stops when encountering paused transitions
 - Integration with NextTransitionFinder for dynamic transition resolution
 - Conditional transition execution based on validation logic
 - Post-action execution pipeline for cleanup operations
 - Enhanced error handling with action failure recovery
+- Database persistence through ProcessExecutionContextWriter
 - Parameter passing throughout the execution context
+
+### Infrastructure Improvements
+- **Docker Environment**: Multi-service setup with PHP, PostgreSQL, and Nginx
+- **Database Schema**: UUID-based process tracking with JSONB transition history
+- **Doctrine Migrations**: Automated database schema management
+- **Service Configuration**: Symfony services configured for dependency injection
 
 ### Architecture Decisions
 - All new interfaces follow strict typing with `declare(strict_types=1)`
 - Readonly properties used extensively for immutability
 - Contract-first development with interface segregation
 - UUID-based process identification for traceability
-- Separation of concerns between validation, execution, and post-processing
+- Database-first persistence with JSONB for flexibility
+- Pause-driven workflow control for external integrations
+- Separation of concerns between validation, execution, persistence, and post-processing
 
 ### Recent Refactoring (2025-09-13)
 The codebase has been reorganized into domain-specific folders for better maintainability:
@@ -131,6 +167,6 @@ The codebase has been reorganized into domain-specific folders for better mainta
 - **Action folder**: Separates ActionInterface and PostActionInterface for better interface segregation
 - **Condition folder**: Contains all condition-related logic including AlwaysValidCondition and ConditionInterface
 - **ProcessExecutionContext folder**: Comprehensive process context management with factory patterns and status enums
-- **Implem folder**: Concrete utility implementations like SfProcessExecutionContextIdGenerator
+- **Implem folder**: Concrete utility implementations like SfProcessExecutionContextIdGenerator and DBALProcessExecutionContextWriter
 
 This organization improves code discoverability and follows domain-driven design principles.

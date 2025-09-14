@@ -55,6 +55,9 @@ final class Engine implements EngineInterface
                 $this->executePostActions($nextTransition->getPostActions(), $context->getParameters());
                 $context->setLastState($toState);
                 $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
+                if ($nextTransition->isPaused()) {
+                    $context->setStatus(ProcessExecutionContextStatusEnum::PAUSED);
+                }
                 $nextTransition = $this->nextTransitionFinder->findStateNextTransition(
                     $context,
                     $toState,

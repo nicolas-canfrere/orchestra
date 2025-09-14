@@ -35,4 +35,8 @@ interface TransitionInterface
     public function getConditions(): array;
 
     public function then(StateInterface $toState): TransitionInterface;
+
+    public function isPaused(): bool;
+
+    public function withPauseAfterTransition(): self;
 }

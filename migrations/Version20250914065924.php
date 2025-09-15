@@ -21,12 +21,12 @@ final class Version20250914065924 extends AbstractMigration
     {
         $sql = <<<SQL
 CREATE TABLE IF NOT EXISTS public.process_execution_context (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    process_id UUID NOT NULL,
+    process_id UUID PRIMARY KEY,
     status VARCHAR(100) NOT NULL,
     last_state_name VARCHAR(255) NOT NULL,
     executed_transitions JSONB NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    parameters JSONB,
+    created_at TIMESTAMP NOT NULL,
     failure TEXT
 );
 SQL;

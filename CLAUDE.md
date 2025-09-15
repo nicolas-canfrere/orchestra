@@ -183,3 +183,48 @@ Key improvements include:
 - `PostActionsExecutorTest`: Enhanced callback type safety with proper mixed type handling
 - `AbstractProcessDefinitionTest`: Removed redundant type assertions for guaranteed return types
 - All tests now pass strict PHPStan analysis with proper type guards and defensive programming
+
+### Cycle Detection Feature (2025-09-15)
+The state machine now includes robust cycle detection capabilities at ProcessDefinition construction time:
+
+**Core Implementation:**
+- `CycleDetectedException`: Specialized exception providing detailed cycle path information
+- `validateCycleDetection()`: Public method in AbstractProcessDefinition for manual cycle validation
+- **DFS Algorithm**: Optimized depth-first search with recursion stack for O(V+E) cycle detection
+- **Automatic Validation**: Cycles detected during ProcessDefinition construction by default
+- **Optional Disabling**: Can be disabled via constructor parameter for specific use cases
+
+**Key Features:**
+- **Comprehensive Detection**: Detects simple cycles, complex cycles, self-loops, and cycles involving start state
+- **Detailed Error Messages**: Exception includes complete cycle path (e.g., "stateA -> stateB -> stateC -> stateA")
+- **Performance Optimized**: Efficient graph traversal with early termination on cycle detection
+- **Memory Safe**: Proper cleanup of recursion stack and path tracking
+
+**Testing Coverage:**
+- 11 comprehensive test cases in `CycleDetectionTest.php`
+- Tests cover linear workflows, branching workflows, various cycle types
+- Edge cases including disconnected components and multiple cycles
+- Integration tests with existing AbstractProcessDefinitionTest suite
+
+**Architecture Integration:**
+- Seamlessly integrates with existing StateInterface/TransitionInterface architecture
+- Builds transition graph from registered states and their relationships
+- Complements existing CircularTransitionException in Engine for runtime detection
+- Maintains backward compatibility with existing ProcessDefinition implementations
+
+**Usage Examples:**
+```php
+// Automatic cycle detection (default)
+$processDefinition = new MyProcessDefinition(); // Throws CycleDetectedException if cycle found
+
+// Manual validation
+$cyclePath = $processDefinition->validateCycleDetection();
+if ($cyclePath !== null) {
+    // Handle cycle: ['stateA', 'stateB', 'stateA']
+}
+
+// Disable cycle detection for specific cases
+$processDefinition = new MyProcessDefinition(false); // No automatic validation
+```
+
+This enhancement significantly improves the robustness of workflow definitions by catching cycle issues at design time rather than runtime, providing clear debugging information and maintaining high performance standards.

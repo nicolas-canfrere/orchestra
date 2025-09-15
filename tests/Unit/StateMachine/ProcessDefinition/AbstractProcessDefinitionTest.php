@@ -164,25 +164,6 @@ final class AbstractProcessDefinitionTest extends TestCase
         $this->assertNotNull($processDefinition->stateByName('level4'));
     }
 
-    public function testCircularReferencesAreHandledCorrectly(): void
-    {
-        $processDefinition = new class extends AbstractProcessDefinition {
-            public function init(): void
-            {
-                $stateA = new State('stateA');
-                $stateB = new State('stateB');
-
-                // Create circular reference: start -> A -> B -> A
-                $this->startState->then($stateA);
-                $stateA->then($stateB);
-                $stateB->then($stateA); // Back to A
-            }
-        };
-
-        $this->assertNotNull($processDefinition->stateByName('stateA'));
-        $this->assertNotNull($processDefinition->stateByName('stateB'));
-    }
-
     public function testWorkflowWithActionsOnTransitions(): void
     {
         $action = $this->createMock(ActionInterface::class);

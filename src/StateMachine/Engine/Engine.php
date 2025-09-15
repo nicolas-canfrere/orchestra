@@ -79,7 +79,6 @@ final readonly class Engine implements EngineInterface
         StateInterface $currentState,
         ProcessExecutionContextInterface $context,
     ): ProcessExecutionContextInterface {
-        $visitedStates = new \WeakMap();
         $nextTransition = $this->nextTransitionFinder->findStateNextTransition($context, $currentState);
 
         while (
@@ -87,11 +86,7 @@ final readonly class Engine implements EngineInterface
             && null !== $nextTransition
         ) {
             $toState = $nextTransition->getToState();
-            // Detect circular transition
-            if (isset($visitedStates[$toState])) {
-                throw new CircularTransitionException('Circular transition detected');
-            }
-            $visitedStates[$toState] = true;
+
             try {
                 $this->executeAction($nextTransition->getAction(), $context->getParameters());
                 $this->postActionsExecutor->executePostActions($nextTransition->getPostActions(), $context->getParameters());

@@ -1,6 +1,6 @@
 # Orchestra
 
-Orchestra is a Symfony-based state machine framework built in PHP 8.2+ that provides workflow orchestration capabilities using object-oriented design patterns with strict interface contracts.
+Orchestra is a Symfony-based state machine framework built in PHP 8.4+ that provides workflow orchestration capabilities using object-oriented design patterns with strict interface contracts.
 
 ## 🚀 Quick Start
 
@@ -124,7 +124,7 @@ The application runs in a multi-container Docker environment:
 
 - **PHP 8.4**: FPM with Alpine Linux, includes intl, pdo_pgsql, opcache, and xdebug
 - **Nginx 1.29**: Web server with reverse proxy configuration
-- **PostgreSQL 16**: Database with automatic health checks and initialization
+- **PostgreSQL 15**: Database with automatic health checks and initialization
 
 ### Environment Configuration
 
@@ -135,7 +135,7 @@ The application uses environment variables defined in `.env`:
 POSTGRES_DB=orchestra
 POSTGRES_USER=orchestra
 POSTGRES_PASSWORD=your_password
-DATABASE_URL="postgresql://orchestra:password@database:5432/orchestra?serverVersion=16&charset=utf8"
+DATABASE_URL="postgresql://orchestra:password@database:5432/orchestra?serverVersion=15&charset=utf8"
 
 # Symfony
 APP_ENV=dev

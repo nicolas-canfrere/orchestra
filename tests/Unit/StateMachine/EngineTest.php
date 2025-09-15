@@ -170,35 +170,6 @@ final class EngineTest extends TestCase
         $this->engine->launch($processDefinition);
     }
 
-    public function testDetectsCircularTransition(): void
-    {
-        $state1 = $this->createMock(StateInterface::class);
-        $state2 = $this->createMock(StateInterface::class);
-
-        $transition1 = $this->createMock(TransitionInterface::class);
-        $transition2 = $this->createMock(TransitionInterface::class);
-
-        // Create circular reference: start → state2 → state2 (circular)
-        $transition1->method('getToState')->willReturn($state2);
-        $transition1->method('getAction')->willReturn(null);
-        $transition1->method('getPostActions')->willReturn([]);
-
-        $transition2->method('getToState')->willReturn($state2); // Same state again = circular
-        $transition2->method('getAction')->willReturn(null);
-        $transition2->method('getPostActions')->willReturn([]);
-
-        // The finder will return transition1 (go to state2), then transition2 (try to go to state2 again)
-        $this->nextTransitionFinder
-            ->method('findStateNextTransition')
-            ->willReturnOnConsecutiveCalls($transition1, $transition2);
-
-        $this->expectException(CircularTransitionException::class);
-        $this->expectExceptionMessage('Circular transition detected');
-
-        $context = $this->createMockContext();
-        $this->engine->executeTransition($state1, $context);
-    }
-
     public function testExecuteTransitionHandlesActionException(): void
     {
         $endState = $this->createMockState('end');

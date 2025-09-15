@@ -6,7 +6,6 @@ namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
 use App\StateMachine\Action\PostActionsExecutorInterface;
-use App\StateMachine\Engine\CircularTransitionException;
 use App\StateMachine\Engine\Engine;
 use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\StateMachine\ProcessDefinition;
 
+use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Action\ActionRegistryInterface;
 use App\StateMachine\State\State;
 use App\StateMachine\State\StateInterface;
 use App\StateMachine\Transition\TransitionInterface;
@@ -16,8 +18,9 @@ abstract class AbstractProcessDefinition implements ProcessDefinitionInterface
     protected array $states = [];
     protected StateInterface $startState;
 
-    public function __construct()
-    {
+    public function __construct(
+        protected ?ActionRegistryInterface $actionRegistry = null,
+    ) {
         $this->startState = new State('startState');
         $this->init();
         $this->registerStates($this->startState->getNextTransitions());
@@ -48,6 +51,22 @@ abstract class AbstractProcessDefinition implements ProcessDefinitionInterface
     public function validateCycleDetection(): ?array
     {
         return $this->findCycle();
+    }
+
+    /**
+     * Get an action from the registry by its fully qualified class name.
+     */
+    protected function getAction(string $actionClass): ?ActionInterface
+    {
+        return $this->actionRegistry?->get($actionClass);
+    }
+
+    /**
+     * Check if an action is registered.
+     */
+    protected function hasAction(string $actionClass): bool
+    {
+        return $this->actionRegistry?->has($actionClass) ?? false;
     }
 
     /**

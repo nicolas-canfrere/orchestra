@@ -30,7 +30,8 @@ final class Example3ProcessDefinition extends AbstractProcessDefinition
         $state1
             ->when([new AlwaysValidCondition()])
             ->then($state2)
-            ->withPauseAfterTransition();
+            ->withPauseAfterTransition()
+            ->withAction($this->actionRegistry->get(Action1::class));
         $state1
             ->then($state3);
         $state2

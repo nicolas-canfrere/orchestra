@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class ExampleController extends AbstractController
+final class Example1Controller extends AbstractController
 {
     public function __construct(
         private readonly EngineInterface $engine,
@@ -21,8 +21,8 @@ final class ExampleController extends AbstractController
     }
 
     #[Route(
-        path: '/example',
-        name: 'example',
+        path: '/example1',
+        name: 'example1',
         methods: ['POST'],
     )]
     public function __invoke(Request $request): Response

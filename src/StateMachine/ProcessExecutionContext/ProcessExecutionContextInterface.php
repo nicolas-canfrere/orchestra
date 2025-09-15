@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\StateMachine\ProcessExecutionContext;
 
 use App\StateMachine\State\StateInterface;
-use App\StateMachine\Transition\TransitionInterface;
 
 interface ProcessExecutionContextInterface
 {
@@ -27,10 +26,6 @@ interface ProcessExecutionContextInterface
      * @return ExecutedTransition[]
      */
     public function getExecutedTransitions(): array;
-
-    public function getCurrentTransition(): ?TransitionInterface;
-
-    public function setCurrentTransition(TransitionInterface $currentTransition): self;
 
     /**
      * @return array<string, mixed>

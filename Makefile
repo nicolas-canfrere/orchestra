@@ -17,7 +17,8 @@ COMPOSER_CLI = docker run $(DOCKER_FLAGS) -i --rm \
 	composer:2
 
 DOCKER_COMPOSE_FILE ?= compose.yaml
-DOCKER_COMPOSE_RUN = docker compose -f $(DOCKER_COMPOSE_FILE) run --rm
+DOCKER_COMPOSE = docker compose -f $(DOCKER_COMPOSE_FILE)
+DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE) run --rm
 
 .PHONY: $(filter-out vendor, $(shell awk -F: '/^[a-zA-Z0-9_%-]+:/ { print $$1 }' $(MAKEFILE_LIST) | sort | uniq))
 
@@ -35,9 +36,22 @@ static-code-analysis: ## Code analysis
 apply-cs: ## Apply coding standards with PHP CS Fixer
 	$(DOCKER_COMPOSE_RUN) --no-deps php ./vendor/bin/php-cs-fixer fix --show-progress=dots --diff --config=.php-cs-fixer.dist.php
 
+##@ RUN
+up: ## Start the app
+	$(DOCKER_COMPOSE) up -d --remove-orphans
+
+down: ## Stop the app
+	$(DOCKER_COMPOSE) down --remove-orphans
 ##@ TESTS
 test: unit-test
 
 unit-test: DOCKER_COMPOSE_FILE=compose.test.yaml
 unit-test: ## Run Unit Tests
 	$(DOCKER_COMPOSE_RUN)  --no-deps php ./vendor/bin/phpunit $(R) --testsuite=Unit
+
+##@ DATABASE INTERACTIONS
+generate-migration: ## Run Doctrine generate empty migration file
+	$(DOCKER_COMPOSE_RUN) php bin/console doctrine:migrations:generate
+
+migrate: ## Run Doctrine migrations against db
+	$(DOCKER_COMPOSE_RUN) php bin/console doctrine:migrations:migrate

@@ -16,6 +16,7 @@ final class Transition implements TransitionInterface
      * @var PostActionInterface[]
      */
     private array $postActions = [];
+    private bool $pauseAfterTransition = false;
 
     /**
      * @param ConditionInterface[] $conditions
@@ -62,6 +63,18 @@ final class Transition implements TransitionInterface
         $this->postActions = $postActions;
 
         return $this;
+    }
+
+    public function withPauseAfterTransition(): self
+    {
+        $this->pauseAfterTransition = true;
+
+        return $this;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->pauseAfterTransition;
     }
 
     /**

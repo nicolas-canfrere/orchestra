@@ -9,7 +9,7 @@ use App\StateMachine\Condition\AlwaysValidCondition;
 use App\StateMachine\ProcessDefinition\AbstractProcessDefinition;
 use App\StateMachine\State\State;
 
-final class Example2ProcessDefinition extends AbstractProcessDefinition
+final class Example3ProcessDefinition extends AbstractProcessDefinition
 {
     public function init(): void
     {
@@ -23,13 +23,14 @@ final class Example2ProcessDefinition extends AbstractProcessDefinition
          * startState
          * state1
          * state2
-         * state5
+         * => PAUSED
          */
 
         $this->startState->then($state1);
         $state1
             ->when([new AlwaysValidCondition()])
-            ->then($state2);
+            ->then($state2)
+            ->withPauseAfterTransition();
         $state1
             ->then($state3);
         $state2

@@ -10,5 +10,7 @@ interface ProcessDefinitionInterface
 {
     public function init(): void;
 
+    public function stateByName(string $stateName): ?StateInterface;
+
     public function getStartState(): StateInterface;
 }

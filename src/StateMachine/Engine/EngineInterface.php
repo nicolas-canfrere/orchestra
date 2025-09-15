@@ -25,4 +25,6 @@ interface EngineInterface
      * @param array<string, mixed> $parameters
      */
     public function executeAction(?ActionInterface $action, array $parameters): void;
+
+    public function resume(ProcessDefinitionInterface $processDefinition, string $processId): void;
 }

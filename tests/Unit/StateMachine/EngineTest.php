@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\StateMachine;
 
 use App\StateMachine\Action\ActionInterface;
+use App\StateMachine\Action\PostActionsExecutorInterface;
 use App\StateMachine\Engine\CircularTransitionException;
 use App\StateMachine\Engine\Engine;
 use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContext;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextBuilder;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFinderInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextIdGeneratorInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
@@ -27,16 +30,21 @@ final class EngineTest extends TestCase
      * @var NextTransitionFinderInterface&MockObject
      */
     private NextTransitionFinderInterface $nextTransitionFinder;
+    private ProcessExecutionContextBuilder $processExecutionContextBuilder;
 
     protected function setUp(): void
     {
         $idGenerator = $this->createMock(ProcessExecutionContextIdGeneratorInterface::class);
         $contextFactory = new ProcessExecutionContextFactory($idGenerator);
         $this->nextTransitionFinder = $this->createMock(NextTransitionFinderInterface::class);
+        $this->processExecutionContextBuilder = new ProcessExecutionContextBuilder();
         $this->engine = new Engine(
             $contextFactory,
             $this->nextTransitionFinder,
-            $this->createMock(ProcessExecutionContextWriterInterface::class)
+            $this->createMock(ProcessExecutionContextWriterInterface::class),
+            $this->createMock(ProcessExecutionContextFinderInterface::class),
+            $this->processExecutionContextBuilder,
+            $this->createMock(PostActionsExecutorInterface::class),
         );
     }
 
@@ -230,7 +238,6 @@ final class EngineTest extends TestCase
         $this->engine->executeTransition($startState, $context);
 
         $this->assertSame($endState, $context->getLastState());
-        $this->assertSame($transition, $context->getCurrentTransition());
         $this->assertCount(1, $context->getExecutedTransitions());
     }
 

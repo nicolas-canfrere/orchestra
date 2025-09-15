@@ -6,20 +6,11 @@ namespace App\ProcessDefinition;
 
 use App\StateMachine\Condition\AlwaysInvalidCondition;
 use App\StateMachine\Condition\AlwaysValidCondition;
-use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
+use App\StateMachine\ProcessDefinition\AbstractProcessDefinition;
 use App\StateMachine\State\State;
-use App\StateMachine\State\StateInterface;
 
-final class Example3ProcessDefinition implements ProcessDefinitionInterface
+final class Example3ProcessDefinition extends AbstractProcessDefinition
 {
-    private StateInterface $startState;
-
-    public function __construct()
-    {
-        $this->startState = new State('startState');
-        $this->init();
-    }
-
     public function init(): void
     {
         $state1 = new State('state1');
@@ -47,10 +38,5 @@ final class Example3ProcessDefinition implements ProcessDefinitionInterface
             ->then($state4);
         $state2
             ->then($state5);
-    }
-
-    public function getStartState(): StateInterface
-    {
-        return $this->startState;
     }
 }

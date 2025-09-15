@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace App\StateMachine\ProcessExecutionContext;
 
 use App\StateMachine\State\StateInterface;
-use App\StateMachine\Transition\TransitionInterface;
 
 final class ProcessExecutionContext implements ProcessExecutionContextInterface
 {
     private ?StateInterface $lastState = null;
     /** @var ExecutedTransition[] */
     private array $executedTransitions = [];
-    private ?TransitionInterface $currentTransition = null;
     private ?\Throwable $exception = null;
 
     /**
@@ -34,18 +32,6 @@ final class ProcessExecutionContext implements ProcessExecutionContextInterface
     public function getExecutedTransitions(): array
     {
         return $this->executedTransitions;
-    }
-
-    public function getCurrentTransition(): ?TransitionInterface
-    {
-        return $this->currentTransition;
-    }
-
-    public function setCurrentTransition(TransitionInterface $currentTransition): self
-    {
-        $this->currentTransition = $currentTransition;
-
-        return $this;
     }
 
     public function getProcessId(): string

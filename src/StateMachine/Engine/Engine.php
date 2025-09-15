@@ -5,23 +5,66 @@ declare(strict_types=1);
 namespace App\StateMachine\Engine;
 
 use App\StateMachine\Action\ActionInterface;
-use App\StateMachine\Action\PostActionInterface;
+use App\StateMachine\Action\PostActionsExecutorInterface;
 use App\StateMachine\ProcessDefinition\ProcessDefinitionInterface;
 use App\StateMachine\ProcessExecutionContext\ExecutedTransition;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextBuilder;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFactory;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextFinderInterface;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextInterface;
+use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextNotFoundException;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextStatusEnum;
 use App\StateMachine\ProcessExecutionContext\ProcessExecutionContextWriterInterface;
 use App\StateMachine\State\StateInterface;
 use App\StateMachine\Transition\NextTransitionFinderInterface;
 
-final class Engine implements EngineInterface
+final readonly class Engine implements EngineInterface
 {
     public function __construct(
-        private readonly ProcessExecutionContextFactory $contextFactory,
-        private readonly NextTransitionFinderInterface $nextTransitionFinder,
-        private readonly ProcessExecutionContextWriterInterface $processExecutionContextWriter,
+        private ProcessExecutionContextFactory $contextFactory,
+        private NextTransitionFinderInterface $nextTransitionFinder,
+        private ProcessExecutionContextWriterInterface $processExecutionContextWriter,
+        private ProcessExecutionContextFinderInterface $processExecutionContextFinder,
+        private ProcessExecutionContextBuilder $processExecutionContextBuilder,
+        private PostActionsExecutorInterface $postActionsExecutor,
     ) {
+    }
+
+    public function resume(ProcessDefinitionInterface $processDefinition, string $processId): void
+    {
+        $contextReadModel = $this->processExecutionContextFinder->findOneByProcessId($processId);
+        if (null === $contextReadModel) {
+            throw new ProcessExecutionContextNotFoundException(
+                sprintf(
+                    'Process "%s" does not found.',
+                    $processId
+                )
+            );
+        }
+        if (ProcessExecutionContextStatusEnum::PAUSED !== $contextReadModel->status) {
+            throw new ResumeForbiddenException(
+                sprintf(
+                    'Resume forbidden for process: %s as it is not paused',
+                    $processId
+                )
+            );
+        }
+        $lastState = $processDefinition->stateByName($contextReadModel->lastStateName);
+        if (null === $lastState) {
+            return;
+        }
+        $processExecutionContext = $this->processExecutionContextBuilder->create(
+            $contextReadModel->processId,
+            $contextReadModel->status,
+            $contextReadModel->createdAt,
+            $contextReadModel->parameters,
+        )
+            ->withLastState($lastState)
+            ->build();
+        $processExecutionContext->setStatus(ProcessExecutionContextStatusEnum::RUNNING);
+
+        $this->executeTransition($lastState, $processExecutionContext);
+        $this->finishAndSaveContext($processExecutionContext);
     }
 
     public function launch(ProcessDefinitionInterface $processDefinition, array $parameters = []): void
@@ -50,9 +93,8 @@ final class Engine implements EngineInterface
             }
             $visitedStates[$toState] = true;
             try {
-                $context->setCurrentTransition($nextTransition);
                 $this->executeAction($nextTransition->getAction(), $context->getParameters());
-                $this->executePostActions($nextTransition->getPostActions(), $context->getParameters());
+                $this->postActionsExecutor->executePostActions($nextTransition->getPostActions(), $context->getParameters());
                 $context->setLastState($toState);
                 $context->addExecutedTransition(ExecutedTransition::create($nextTransition));
                 if ($nextTransition->isPaused()) {
@@ -77,21 +119,6 @@ final class Engine implements EngineInterface
     public function executeAction(?ActionInterface $action, array $parameters): void
     {
         $action?->run($parameters);
-    }
-
-    /**
-     * @param PostActionInterface[] $postActions
-     * @param array<string, mixed> $parameters
-     */
-    public function executePostActions(array $postActions, array $parameters): void
-    {
-        foreach ($postActions as $postAction) {
-            try {
-                $postAction->run($parameters);
-            } catch (\Throwable) {
-                continue;
-            }
-        }
     }
 
     private function finishAndSaveContext(ProcessExecutionContextInterface $context): void

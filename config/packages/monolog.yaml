@@ -2,6 +2,7 @@ monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
         - orchestra
+        - post_action
 
 when@dev:
     monolog:
@@ -17,6 +18,12 @@ when@dev:
                 level: debug
                 formatter: monolog.formatter.json
                 channels: [orchestra]
+            post_action:
+                type: stream
+                path: "%kernel.logs_dir%/post_action.log"
+                level: debug
+                formatter: monolog.formatter.json
+                channels: [ post_action ]
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
